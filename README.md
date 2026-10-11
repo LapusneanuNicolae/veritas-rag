@@ -7,7 +7,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-in%20active%20development-orange">
+  <img src="https://img.shields.io/badge/phases%201--5-complete-success">
+  <img src="https://img.shields.io/badge/tests-20%20passing-success">
   <img src="https://img.shields.io/badge/backend-FastAPI-009688?logo=fastapi&logoColor=white">
   <img src="https://img.shields.io/badge/vector%20db-pgvector-4169E1?logo=postgresql&logoColor=white">
   <img src="https://img.shields.io/badge/license-MIT-green">
