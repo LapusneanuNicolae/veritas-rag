@@ -4,7 +4,8 @@ import io
 
 def extract_text(raw: bytes, ext: str) -> str:
     if ext == ".txt" or ext == ".md":
-        return raw.decode("utf-8", errors="ignore")
+        # utf-8-sig strips a leading byte-order mark (BOM) if present
+        return raw.decode("utf-8-sig", errors="ignore")
 
     if ext == ".pdf":
         from pypdf import PdfReader
