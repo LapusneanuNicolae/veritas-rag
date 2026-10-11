@@ -94,7 +94,9 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
   (in-memory/pgvector) so it runs & tests with zero external services*
 - [x] **Phase 2 — Advanced retrieval:** hybrid search (vector + keyword) fused with **RRF**,
   **reranking** (fake + cross-encoder), query rewriting · all strategy toggles in config
-- [ ] **Phase 3 — Evaluation & observability:** golden set, metrics, eval dashboard, cost/latency tracing
+- [x] **Phase 3 — Evaluation & observability:** golden-set eval runner (faithfulness, answer
+  relevancy, context precision/recall + citation accuracy) via `evals/run_evals.py`, plus per-query
+  tracing of latency & token cost at `GET /api/traces` and `GET /api/stats`
 - [ ] **Phase 4 — Agentic:** LangGraph agent, query decomposition, self-correction, tools
 - [ ] **Phase 5 — Production:** JWT auth, multi-tenancy, Redis caching, CI, live deploy
 
