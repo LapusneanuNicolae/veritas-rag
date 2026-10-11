@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What is the refund window described in the policy?",
+    "reference_answer": "Refunds are available within 30 days of purchase.",
+    "must_cite": ["refund-policy.pdf"]
+  },
+  {
+    "question": "Who is the document owner?",
+    "reference_answer": "The document owner is the Finance department.",
+    "must_cite": ["handbook.docx"]
+  },
+  {
+    "question": "What is the capital of a country not mentioned in the docs?",
+    "reference_answer": "I don't know / not in the provided context.",
+    "must_cite": []
+  }
+]
