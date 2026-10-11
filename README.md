@@ -16,6 +16,22 @@
 
 ---
 
+## Demo
+
+![Veritas RAG UI](docs/demo.png)
+
+A chat UI with document upload, **streamed** answers, inline **source citations**, and an
+**agentic mode** that surfaces the agent's reasoning steps and a faithfulness score. The backend
+runs with **zero external services** (fake provider + in-memory store) for instant local demos, or
+with OpenAI + pgvector in production.
+
+```bash
+# backend  →  http://localhost:8000/docs
+cd backend && pip install -r requirements.txt && uvicorn app.main:app --port 8000
+# frontend →  http://localhost:3000   (new terminal)
+cd frontend && npm install && npm run dev
+```
+
 ## Why this project
 
 Most RAG demos are a thin wrapper around an LLM: `embed → cosine similarity → prompt`.
