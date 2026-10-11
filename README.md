@@ -89,8 +89,9 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
 
 ## Roadmap
 
-- [ ] **Phase 1 — MVP:** upload (PDF/DOCX/MD/TXT), ingestion pipeline, vector retrieval, cited
-  answers, streaming, "I don't know"
+- [x] **Phase 1 — MVP:** upload (PDF/DOCX/MD/TXT), ingestion pipeline, vector retrieval, cited
+  answers, streaming, "I don't know" · *pluggable providers (fake/OpenAI) + vector backends
+  (in-memory/pgvector) so it runs & tests with zero external services*
 - [ ] **Phase 2 — Advanced retrieval:** hybrid search, cross-encoder reranking, query rewriting / HyDE
 - [ ] **Phase 3 — Evaluation & observability:** golden set, metrics, eval dashboard, cost/latency tracing
 - [ ] **Phase 4 — Agentic:** LangGraph agent, query decomposition, self-correction, tools
@@ -126,9 +127,11 @@ uvicorn app.main:app --reload
 veritas-rag/
 ├── backend/            FastAPI app (ingestion + RAG engine)
 │   └── app/
-│       ├── api/        routes: documents, query
-│       ├── core/       chunking, embeddings, retrieval, llm
-│       └── db/         pgvector interface
+│       ├── api/         routes: documents, query
+│       ├── core/        chunking, parsing
+│       ├── providers/   embeddings + chat (fake / OpenAI)
+│       ├── vectorstore/ in-memory + pgvector backends
+│       └── services/    ingestion, rag
 ├── frontend/           Next.js chat UI (coming in Phase 1)
 ├── evals/              golden set + evaluation runner
 ├── docker-compose.yml

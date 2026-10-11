@@ -1,13 +1,9 @@
-"""Query endpoint: ask a question, get a grounded answer with citations.
-
-Pipeline (see app/core/retrieval.py):
-  rewrite -> hybrid retrieve -> rerank -> build context -> LLM -> cite
-"""
+"""Query endpoints: ask (grounded answer with citations) and ask/stream (SSE)."""
 from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from app.core.retrieval import retrieve
-from app.core.llm import generate_answer
+from app.services import rag
 
 router = APIRouter()
 
@@ -30,14 +26,15 @@ class AskResponse(BaseModel):
 
 @router.post("/ask", response_model=AskResponse)
 def ask(req: AskRequest) -> AskResponse:
-    # 1) retrieve the most relevant chunks (hybrid + rerank — see retrieval.py)
-    chunks = retrieve(req.question, top_n=req.top_n)
+    text, citations = rag.answer(req.question, top_n=req.top_n)
+    return AskResponse(answer=text, citations=[Citation(**c) for c in citations])
 
-    # 2) generate a grounded answer; the LLM is told to answer only from context
-    #    or to say it doesn't know.
-    answer, citations = generate_answer(req.question, chunks)
 
-    return AskResponse(
-        answer=answer,
-        citations=[Citation(**c) for c in citations],
-    )
+@router.post("/ask/stream")
+def ask_stream(req: AskRequest) -> StreamingResponse:
+    def event_stream():
+        for token in rag.answer_stream(req.question, top_n=req.top_n):
+            yield f"data: {token}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
