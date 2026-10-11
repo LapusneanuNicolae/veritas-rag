@@ -18,7 +18,7 @@
 
 ## Demo
 
-![Veritas RAG UI](docs/demo.png)
+![Veritas RAG demo](docs/demo.gif)
 
 A chat UI with document upload, **streamed** answers, inline **source citations**, and an
 **agentic mode** that surfaces the agent's reasoning steps and a faithfulness score. The backend
