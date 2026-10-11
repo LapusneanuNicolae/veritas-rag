@@ -12,6 +12,9 @@ pypdf==5.0.1
 python-docx==1.1.2
 # llm / embeddings (model-agnostic — only the provider you configure is used at runtime)
 openai==1.51.0
+# optional: real cross-encoder reranker (set RERANK_PROVIDER=cross-encoder)
+# sentence-transformers==3.1.1
+
 # dev / test
 pytest==8.3.3
 httpx==0.27.2

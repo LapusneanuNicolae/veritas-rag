@@ -31,8 +31,14 @@ class Settings(BaseSettings):
     # --- Retrieval tuning ---
     chunk_size: int = 800
     chunk_overlap: int = 120
-    top_k: int = 20          # candidates retrieved before reranking
+    top_k: int = 20          # candidates retrieved (per source) before reranking
     top_n: int = 5           # chunks sent to the LLM after reranking
+
+    # --- Retrieval strategy (Phase 2) ---
+    use_hybrid: bool = True          # vector + keyword search fused with RRF
+    use_rerank: bool = True          # rerank fused candidates down to top_n
+    use_query_rewrite: bool = False  # rewrite the query before retrieval
+    rerank_provider: str = "fake"    # "fake" | "cross-encoder"
 
     # --- Auth (Phase 5) ---
     jwt_secret: str = "dev-secret-change-me"

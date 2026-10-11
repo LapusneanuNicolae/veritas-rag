@@ -92,7 +92,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
 - [x] **Phase 1 — MVP:** upload (PDF/DOCX/MD/TXT), ingestion pipeline, vector retrieval, cited
   answers, streaming, "I don't know" · *pluggable providers (fake/OpenAI) + vector backends
   (in-memory/pgvector) so it runs & tests with zero external services*
-- [ ] **Phase 2 — Advanced retrieval:** hybrid search, cross-encoder reranking, query rewriting / HyDE
+- [x] **Phase 2 — Advanced retrieval:** hybrid search (vector + keyword) fused with **RRF**,
+  **reranking** (fake + cross-encoder), query rewriting · all strategy toggles in config
 - [ ] **Phase 3 — Evaluation & observability:** golden set, metrics, eval dashboard, cost/latency tracing
 - [ ] **Phase 4 — Agentic:** LangGraph agent, query decomposition, self-correction, tools
 - [ ] **Phase 5 — Production:** JWT auth, multi-tenancy, Redis caching, CI, live deploy

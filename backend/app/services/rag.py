@@ -8,6 +8,9 @@ from __future__ import annotations
 from typing import Iterator
 
 from app.config import get_settings
+from app.core.fusion import reciprocal_rank_fusion
+from app.core.query_transform import rewrite_query
+from app.core.rerank import get_reranker
 from app.providers.factory import get_chat_provider, get_embedding_provider
 from app.types import RetrievedChunk
 from app.vectorstore.factory import get_vectorstore
@@ -21,10 +24,25 @@ SYSTEM_PROMPT = (
 
 def retrieve(question: str, top_n: int | None = None,
              tenant_id: str = "default") -> list[RetrievedChunk]:
+    """Full retrieval pipeline: (rewrite) → hybrid search → RRF → rerank → top_n."""
     s = get_settings()
     n = top_n or s.top_n
-    q_vec = get_embedding_provider().embed([question])[0]
-    return get_vectorstore().vector_search(q_vec, top_k=n, tenant_id=tenant_id)
+    store = get_vectorstore()
+
+    search_query = rewrite_query(question) if s.use_query_rewrite else question
+    q_vec = get_embedding_provider().embed([search_query])[0]
+
+    dense = store.vector_search(q_vec, top_k=s.top_k, tenant_id=tenant_id)
+
+    if s.use_hybrid:
+        lexical = store.keyword_search(search_query, top_k=s.top_k, tenant_id=tenant_id)
+        candidates = reciprocal_rank_fusion([dense, lexical])
+    else:
+        candidates = dense
+
+    if s.use_rerank and candidates:
+        return get_reranker().rerank(search_query, candidates, top_n=n)
+    return candidates[:n]
 
 
 def build_prompt(question: str, chunks: list[RetrievedChunk]) -> str:
