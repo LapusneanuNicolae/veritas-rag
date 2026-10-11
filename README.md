@@ -97,7 +97,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
 - [x] **Phase 3 — Evaluation & observability:** golden-set eval runner (faithfulness, answer
   relevancy, context precision/recall + citation accuracy) via `evals/run_evals.py`, plus per-query
   tracing of latency & token cost at `GET /api/traces` and `GET /api/stats`
-- [ ] **Phase 4 — Agentic:** LangGraph agent, query decomposition, self-correction, tools
+- [x] **Phase 4 — Agentic:** multi-step agent (`POST /api/ask/agentic`) — query decomposition,
+  multi-query retrieval, faithfulness self-check and self-correction, with inspectable reasoning steps
 - [ ] **Phase 5 — Production:** JWT auth, multi-tenancy, Redis caching, CI, live deploy
 
 ---

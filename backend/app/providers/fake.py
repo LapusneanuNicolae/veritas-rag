@@ -48,6 +48,11 @@ class FakeChatProvider:
         return "".join(self.stream(system, user))
 
     def stream(self, system: str, user: str) -> Iterator[str]:
+        # Transform-style tasks (query rewrite / decomposition) have no Context block:
+        # echo the input so those steps behave sensibly without a real model.
+        if "Context:" not in user:
+            yield user.strip()
+            return
         context = ""
         if "Context:" in user and "Question:" in user:
             context = user.split("Context:", 1)[1].split("Question:", 1)[0]

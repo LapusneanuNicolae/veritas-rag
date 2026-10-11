@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from app.agent.controller import agentic_answer
 from app.services import rag
 
 router = APIRouter()
@@ -38,3 +39,19 @@ def ask_stream(req: AskRequest) -> StreamingResponse:
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+class AgenticResponse(BaseModel):
+    answer: str
+    citations: list[Citation]
+    sub_questions: list[str]
+    steps: list[dict]
+    faithfulness: float
+    self_corrected: bool
+
+
+@router.post("/ask/agentic", response_model=AgenticResponse)
+def ask_agentic(req: AskRequest) -> AgenticResponse:
+    """Multi-step agentic answer: decompose → retrieve → answer → self-correct."""
+    result = agentic_answer(req.question)
+    return AgenticResponse(**result)
