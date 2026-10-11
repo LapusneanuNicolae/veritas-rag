@@ -99,7 +99,9 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
   tracing of latency & token cost at `GET /api/traces` and `GET /api/stats`
 - [x] **Phase 4 — Agentic:** multi-step agent (`POST /api/ask/agentic`) — query decomposition,
   multi-query retrieval, faithfulness self-check and self-correction, with inspectable reasoning steps
-- [ ] **Phase 5 — Production:** JWT auth, multi-tenancy, Redis caching, CI, live deploy
+- [x] **Phase 5 — Production:** JWT auth (`/auth/register`,`/login`,`/me`), **multi-tenant isolation**,
+  per-IP rate limiting, answer caching (in-memory/Redis), CI, and a **Next.js chat frontend**
+  (upload, citations, agentic mode)
 
 ---
 
@@ -125,20 +127,39 @@ uvicorn app.main:app --reload
 
 ---
 
+## API
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/auth/register` · `/auth/login` | get a JWT (creates a tenant) |
+| GET  | `/auth/me` | current user / tenant |
+| POST | `/api/documents/upload` | ingest a document (tenant-scoped) |
+| POST | `/api/ask` | grounded answer with citations (cached) |
+| POST | `/api/ask/stream` | streamed answer (SSE) |
+| POST | `/api/ask/agentic` | decompose → retrieve → self-correct, with steps |
+| GET  | `/api/traces` · `/api/stats` | per-query traces, latency & token cost |
+
+Interactive docs at `/docs`.
+
 ## Project structure
 
 ```
 veritas-rag/
-├── backend/            FastAPI app (ingestion + RAG engine)
+├── backend/
 │   └── app/
-│       ├── api/         routes: documents, query
-│       ├── core/        chunking, parsing
-│       ├── providers/   embeddings + chat (fake / OpenAI)
-│       ├── vectorstore/ in-memory + pgvector backends
-│       └── services/    ingestion, rag
-├── frontend/           Next.js chat UI (coming in Phase 1)
-├── evals/              golden set + evaluation runner
-├── docker-compose.yml
+│       ├── api/           routes: auth, documents, query, traces
+│       ├── core/          chunking, parsing, fusion (RRF), rerank, query_transform
+│       ├── providers/     embeddings + chat (fake / OpenAI), model-agnostic
+│       ├── vectorstore/   in-memory + pgvector backends
+│       ├── services/      ingestion, rag
+│       ├── agent/         agentic controller (decompose + self-correct)
+│       ├── eval/          RAGAS-style metrics + runner
+│       ├── observability/ per-query tracing (latency, token cost)
+│       ├── auth/          JWT + password hashing + tenant resolution
+│       └── middleware/    rate limiting
+├── frontend/              Next.js chat UI (upload, citations, agentic mode)
+├── evals/                 golden set + CLI eval runner
+├── docker-compose.yml     db (pgvector) · redis · backend · frontend
 └── ARCHITECTURE.md
 ```
 

@@ -40,9 +40,14 @@ class Settings(BaseSettings):
     use_query_rewrite: bool = False  # rewrite the query before retrieval
     rerank_provider: str = "fake"    # "fake" | "cross-encoder"
 
-    # --- Auth (Phase 5) ---
+    # --- Auth & production (Phase 5) ---
     jwt_secret: str = "dev-secret-change-me"
     jwt_expire_minutes: int = 1440
+    require_auth: bool = False          # when False, requests use the "default" tenant
+    rate_limit_per_minute: int = 120    # per client IP
+    cache_enabled: bool = True
+    cache_backend: str = "memory"       # "memory" | "redis"
+    cache_ttl_seconds: int = 300
 
 
 @lru_cache
